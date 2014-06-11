@@ -1,6 +1,6 @@
 {
-  "name": "go-jsbox-skeleton",
-  "version": "0.2.0",
+  "name": "go-service-delivery",
+  "version": "0.0.0",
   "description": "Go-Service-Delivery for a vumi javascript sandbox app",
   "main": "lib/app.js",
   "scripts": {
