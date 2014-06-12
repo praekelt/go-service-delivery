@@ -1,6 +1,8 @@
+var assert = require('assert');
 var vumigo = require('vumigo_v02');
 var fixtures = require('./fixtures');
 var AppTester = vumigo.AppTester;
+
 
 
 describe("app", function() {
@@ -46,11 +48,38 @@ describe("app", function() {
                     .check.interaction({
                         state: 'states:electricity',
                         reply:'Enter your electricity problem'
-                        
+
                     })
                     .run();
             });
         });
+		
+		describe("when user enters their electricity problem", function(){
+			it("should save user contacts", function(){
+				return tester
+					.setup.user.state('states:electricity')
+					.input('light')
+					.check(function(api){
+
+						var contact = api.contacts.store[0];
+						assert.equal(contact.extra.electricity, 'light' );
+					})
+					.run();
+			});
+			
+			it("should move users to the end state", function(){
+				return tester
+					.setup.user.state('states:electricity')
+					.input('delivery report')
+					.check.interaction({
+						state: 'states:end',
+						reply: 'Thanks, cheers!'
+					})
+					.run();
+				
+			});
+			
+		});
 
         describe("when the user asks to exit", function() {
             it("should say thank you and end the session", function() {
