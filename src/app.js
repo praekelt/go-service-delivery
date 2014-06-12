@@ -9,11 +9,11 @@ go.app = function() {
     var GoApp = App.extend(function(self) {
         App.call(self, 'states:start');
 
-		self.init = function(){
-			return self.im.contacts.for_user().then(function(contact){
-				self.contact = contact;
-			});
-		};
+        self.init = function(){
+            return self.im.contacts.for_user().then(function(contact){
+                self.contact = contact;
+            });
+        };
 
         self.states.add('states:start', function(name) {
             return new ChoiceState(name, {
@@ -28,31 +28,29 @@ go.app = function() {
                 }
             });
         });
-		
-		self.states.add('states:electricity', function(name){
-			return new FreeText(name,{
-				question: 'Enter your electricity problem',
-				next: function(content){
-					self.contact.extra.electricity = content;
 
-					return self.im.contacts.save(self.contact).then(function(){
-					
-						return "states:end";
-					});
+        self.states.add('states:electricity', function(name){
+            return new FreeText(name,{
+                question: 'Enter your electricity problem',
+                next: function(content){
 
-				}
-			});
-		});
-			
-		
+                    self.contact.extra.electricity = content;
+
+                    return self.im.contacts.save(self.contact).then(function(){
+                        return "states:end";
+                    });
+                }
+            });
+        });
+
         self.states.add('states:end', function(name) {
             return new EndState(name, {
                 text: 'Thanks, cheers!',
                 next: 'states:start'
             });
         });
-	});
-	
+    });
+
     return {
         GoApp: GoApp
     };
