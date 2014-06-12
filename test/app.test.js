@@ -33,7 +33,10 @@ describe("app", function() {
                         reply: [
                             'Choose your category?',
                             '1. Electricity',
-                            '2. Exit'
+                            '2. Water',
+                            '3. Sanitation',
+                            '4. Other',
+                            '5. Exit'
                         ].join('\n')
                     })
                     .run();
@@ -49,6 +52,48 @@ describe("app", function() {
 
                         state: 'states:electricity',
                         reply:'Enter your electricity problem'
+                    })
+                    .run();
+            });
+        });
+
+        describe("when the user selects water", function(){
+            it("should ask them to enter their water problem", function(){
+                return tester
+                    .setup.user.state('states:start')
+                    .input('2')
+                    .check.interaction({
+
+                        state: 'states:water',
+                        reply: 'Enter your water problem'
+                     })
+                     .run();
+            });
+        });
+
+        describe("when the user selects sanitation", function(){
+            it("should ask them to enter their sanitation problem", function(){
+                return tester
+                    .setup.user.state('states:start')
+                    .input('3')
+                    .check.interaction({
+
+                        state: 'states:sanitation',
+                        reply: 'Enter your sanitation problem'
+                    })
+                    .run();
+            });
+        });
+
+        describe("when the user selects other", function(){
+            it("should ask them to enter their other problem", function(){
+                return tester
+                    .setup.user.state('states:start')
+                    .input('4')
+                    .check.interaction({
+
+                        state: 'states:other',
+                        reply: 'Enter your other problem'
                     })
                     .run();
             });
@@ -79,11 +124,86 @@ describe("app", function() {
             });
         });
 
+        describe("when user enters their water problem", function(){
+            it("should save user contacts", function(){
+                return tester
+                .setup.user.state('states:water')
+                .input('pipe')
+                .check(function(api){
+
+                    var contact = api.contacts.store[0];
+                    assert.equal(contact.extra.water, 'pipe');
+                })
+                .run();
+            });
+
+            it("should move users to the end state", function(){
+                return tester
+                    .setup.user.state('states:electricity')
+                    .input('delivery report')
+                    .check.interaction({
+                        state: 'states:end',
+                        reply: 'Thanks, cheers!'
+                    })
+                    .run();
+            });
+        });
+
+        describe("when user enters their sanitation problem", function(){
+            it("should save user contacts", function(){
+                return tester
+                .setup.user.state('states:sanitation')
+                .input('block-age')
+                .check(function(api){
+
+                    var contact = api.contacts.store[0];
+                    assert.equal(contact.extra.sanitation, 'block-age');
+                })
+                .run();
+            });
+
+            it("should move users to the end state", function(){
+                return tester
+                    .setup.user.state('states:sanitation')
+                    .input('blockage report')
+                    .check.interaction({
+                        state: 'states:end',
+                        reply: 'Thanks, cheers!'
+                    })
+                    .run();
+            });
+        });
+
+        describe("when user enters their other problem", function(){
+            it("should save user contacts", function(){
+                return tester
+                .setup.user.state('states:other')
+                .input('other-problem')
+                .check(function(api){
+
+                    var contact = api.contacts.store[0];
+                    assert.equal(contact.extra.other, 'other-problem');
+                })
+                .run();
+            });
+
+            it("should move users to the end state", function(){
+                return tester
+                    .setup.user.state('states:other')
+                    .input('blockage report')
+                    .check.interaction({
+                        state: 'states:end',
+                        reply: 'Thanks, cheers!'
+                    })
+                    .run();
+            });
+        });
+
         describe("when the user asks to exit", function() {
             it("should say thank you and end the session", function() {
                 return tester
                     .setup.user.state('states:start')
-                    .input('2')
+                    .input('5')
                     .check.interaction({
                         state: 'states:end',
                         reply: 'Thanks, cheers!'
