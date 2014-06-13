@@ -28,6 +28,9 @@ go.app = function() {
 
                 choices: [
                     new Choice('states:electricity', 'Electricity'),
+                    new Choice('states:water', 'Water'),
+                    new Choice('states:sanitation', 'Sanitation'),
+                    new Choice('states:other', 'Other'),
                     new Choice('states:end', 'Exit')],
 
                 next: function(choice) {
@@ -42,6 +45,48 @@ go.app = function() {
                 next: function(content){
 
                     self.contact.extra.electricity = content;
+
+                    return self.im.contacts.save(self.contact).then(function(){
+                        return "states:end";
+                    });
+                }
+            });
+        });
+
+        self.states.add('states:water', function(name){
+            return new FreeText(name,{
+                question: 'Enter your water problem',
+                next: function(content){
+
+                    self.contact.extra.water = content;
+
+                    return self.im.contacts.save(self.contact).then(function(){
+                        return "states:end";
+                    });
+                }
+            });
+        });
+
+        self.states.add('states:sanitation', function(name){
+            return new FreeText(name,{
+                question: 'Enter your sanitation problem',
+                next: function(content){
+
+                    self.contact.extra.sanitation = content;
+
+                    return self.im.contacts.save(self.contact).then(function(){
+                        return "states:end";
+                    });
+                }
+            });
+        });
+
+        self.states.add('states:other', function(name){
+            return new FreeText(name,{
+                question: 'Enter your other problem',
+                next: function(content){
+
+                    self.contact.extra.other = content;
 
                     return self.im.contacts.save(self.contact).then(function(){
                         return "states:end";
